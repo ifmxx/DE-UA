@@ -1,0 +1,1211 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Deutsch Meistern</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #0f1117; --bg2: #1a1d27; --bg3: #222636; --bg4: #2a2f45;
+  --accent: #4f8ef7; --green: #3ecf8e; --purple: #8b5cf6;
+  --text: #eef0f8; --text2: #9ba3c0; --text3: #6b7494;
+  --border: #2e3452; --border2: #3d4466;
+  --crisis: #ff4757; --orange: #f5a623;
+  --r: 14px; --r2: 10px;
+}
+html { background: var(--bg); }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  color: var(--text);
+  background: var(--bg);
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+}
+#app {
+  width: 100%;
+  max-width: 430px;
+  min-height: 100vh;
+  background: var(--bg2);
+  position: relative;
+}
+
+/* ── SCREENS: simple display toggle, no flex tricks ── */
+.screen { display: none !important; flex-direction: column; min-height: 100vh; }
+.screen.on { display: flex !important; }
+
+/* ── LAYOUT ── */
+.topbar {
+  padding: 14px 18px 12px;
+  display: flex; align-items: center; gap: 10px;
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+.topbar h2 { font-size: 16px; font-weight: 600; flex: 1; }
+.scroll { flex: 1; overflow-y: auto; padding: 20px; -webkit-overflow-scrolling: touch; }
+
+/* ── BUTTONS ── */
+button { cursor: pointer; font-family: inherit; }
+.btn {
+  width: 100%; padding: 14px; border-radius: var(--r2);
+  font-size: 15px; font-weight: 600; border: none;
+  display: block; text-align: center; margin-bottom: 10px;
+}
+.btn:active { transform: scale(.97); }
+.btn-primary { background: var(--accent); color: #fff; }
+.btn-secondary { background: var(--bg3); border: 1px solid var(--border2); color: var(--text); }
+.btn-danger { background: var(--crisis); color: #fff; padding: 16px; }
+.btn-sm { background: none; border: 1px solid var(--border2); color: var(--text3); padding: 4px 11px; border-radius: 20px; font-size: 12px; }
+.btn:disabled { opacity: .35; cursor: default; transform: none; }
+.back { background: none; border: none; color: var(--text2); font-size: 22px; padding: 4px; line-height: 1; }
+
+/* ── OPTION BUTTONS ── */
+.opt {
+  width: 100%; background: var(--bg3); border: 2px solid var(--border);
+  border-radius: var(--r2); padding: 14px 16px; text-align: left;
+  margin-bottom: 10px; color: var(--text);
+  transition: border-color .15s, background .15s;
+}
+.opt.sel { border-color: var(--accent); background: rgba(79,142,247,.15); }
+.opt .ode { font-size: 15px; font-weight: 500; }
+.opt .ouk { font-size: 12px; color: var(--text3); margin-top: 2px; }
+.opt .osub { font-size: 13px; color: var(--text2); margin-top: 3px; }
+
+/* ── TRANSLATE BUTTON ── */
+.trbtn {
+  background: none; border: 1px solid var(--border2);
+  border-radius: 20px; padding: 4px 12px; font-size: 12px;
+  color: var(--text3); margin-top: 8px; display: inline-block;
+}
+.trbtn:hover { border-color: var(--accent); color: var(--accent); }
+
+/* ── SPLASH ── */
+#s-splash .scroll {
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  text-align: center; min-height: 80vh;
+}
+.logo {
+  width: 88px; height: 88px;
+  background: linear-gradient(135deg, #4f8ef7, #8b5cf6);
+  border-radius: 50%; display: flex; align-items: center;
+  justify-content: center; font-size: 36px; margin-bottom: 22px;
+}
+
+/* ── PROGRESS BAR ── */
+.prog-wrap { padding: 0 20px 14px; flex-shrink: 0; }
+.prog-lbl { font-size: 12px; color: var(--text3); margin-bottom: 6px; }
+.prog { height: 4px; background: var(--border); border-radius: 2px; }
+.prog-fill { height: 100%; background: var(--accent); border-radius: 2px; transition: width .3s; }
+
+/* ── HOME BANNER ── */
+.banner {
+  background: linear-gradient(135deg, rgba(79,142,247,.2), rgba(139,92,246,.2));
+  border: 1px solid rgba(79,142,247,.3); border-radius: var(--r);
+  padding: 18px; margin-bottom: 16px;
+}
+.banner h2 { font-size: 19px; font-weight: 700; margin-bottom: 4px; }
+.xpbar { height: 6px; background: var(--border); border-radius: 3px; margin-top: 10px; }
+.xpfill { height: 100%; background: linear-gradient(90deg, var(--accent), #8b5cf6); border-radius: 3px; transition: width .5s; }
+.xpmeta { display: flex; justify-content: space-between; font-size: 12px; color: var(--text2); margin-top: 5px; }
+.statrow { display: flex; gap: 10px; margin-bottom: 18px; }
+.statbox { flex: 1; background: var(--bg3); border: 1px solid var(--border); border-radius: var(--r2); padding: 10px; text-align: center; }
+.statval { font-size: 22px; font-weight: 700; color: var(--accent); }
+.statlbl { font-size: 10px; color: var(--text3); margin-top: 2px; line-height: 1.3; }
+.sectitle { font-size: 11px; font-weight: 600; color: var(--text3); letter-spacing: .8px; text-transform: uppercase; margin-bottom: 10px; }
+
+/* ── MISSION CARDS ── */
+.mcard {
+  background: var(--bg3); border: 1px solid var(--border);
+  border-radius: var(--r); padding: 14px; margin-bottom: 10px;
+  display: flex; align-items: center; gap: 12px;
+  width: 100%; text-align: left; transition: border-color .2s;
+}
+.mcard:hover { border-color: var(--accent); }
+.mcard.done { opacity: .65; }
+.mico { width: 44px; height: 44px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; }
+.mde { font-size: 14px; font-weight: 600; margin-bottom: 1px; }
+.muk { font-size: 12px; color: var(--text3); }
+.mbadge { font-size: 11px; font-weight: 600; color: var(--accent); background: rgba(79,142,247,.15); padding: 3px 8px; border-radius: 20px; }
+
+/* ── BRANCH CARDS ── */
+.bcard {
+  background: var(--bg3); border: 1px solid var(--border);
+  border-radius: var(--r); padding: 18px; display: flex;
+  align-items: center; gap: 16px; width: 100%; text-align: left;
+  margin-bottom: 12px; transition: border-color .2s, background .2s;
+}
+.bcard:hover { border-color: var(--accent); background: rgba(79,142,247,.06); }
+.bico { width: 52px; height: 52px; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 28px; flex-shrink: 0; }
+.bde { font-size: 15px; font-weight: 700; margin-bottom: 2px; }
+.buk { font-size: 12px; color: var(--text3); margin-bottom: 4px; }
+.bsub { font-size: 13px; color: var(--text2); line-height: 1.4; }
+
+/* ── BOTTOM NAV ── */
+.botnav { display: flex; background: var(--bg); border-top: 1px solid var(--border); padding: 10px 0 max(6px, env(safe-area-inset-bottom)); flex-shrink: 0; }
+.navbtn { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 4px; color: var(--text3); font-size: 10px; background: none; border: none; }
+.navbtn.on { color: var(--accent); }
+.navico { font-size: 20px; }
+
+/* ── CHAT ── */
+.sitbox { background: var(--bg3); border: 1px solid var(--border); border-radius: var(--r2); padding: 14px; margin-bottom: 14px; }
+.sitlbl { font-size: 10px; color: var(--text3); font-weight: 600; letter-spacing: .6px; text-transform: uppercase; margin-bottom: 5px; }
+.sitde { font-size: 14px; color: var(--text); line-height: 1.55; margin-bottom: 4px; }
+.situk { font-size: 12px; color: var(--text3); line-height: 1.5; }
+.phrases { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 14px; }
+.ptag { font-size: 12px; color: var(--accent); background: rgba(79,142,247,.1); border-radius: 6px; padding: 3px 9px; }
+.ptag-uk { font-size: 11px; color: var(--text3); background: rgba(255,255,255,.04); border-radius: 6px; padding: 3px 9px; }
+.chatarea { flex: 1; overflow-y: auto; padding: 14px; display: flex; flex-direction: column; }
+.msg { margin-bottom: 10px; display: flex; flex-direction: column; max-width: 85%; }
+.msg.user { align-self: flex-end; align-items: flex-end; }
+.msg.ai { align-self: flex-start; }
+.msg.sys { align-self: center; max-width: 96%; }
+.bubble { padding: 10px 13px; border-radius: 16px; font-size: 14px; line-height: 1.55; }
+.msg.user .bubble { background: var(--accent); color: #fff; border-bottom-right-radius: 4px; }
+.msg.ai .bubble { background: var(--bg3); border: 1px solid var(--border); border-bottom-left-radius: 4px; }
+.msg.sys .bubble { background: rgba(245,166,35,.08); border: 1px solid rgba(245,166,35,.25); font-size: 13px; text-align: center; border-radius: 10px; color: var(--text2); }
+.msglbl { font-size: 10px; color: var(--text3); margin-bottom: 2px; padding: 0 3px; }
+.typing { display: flex; gap: 4px; padding: 10px 13px; align-items: center; }
+.typing span { width: 7px; height: 7px; background: var(--text3); border-radius: 50%; animation: bop .9s infinite; }
+.typing span:nth-child(2) { animation-delay: .15s; }
+.typing span:nth-child(3) { animation-delay: .3s; }
+@keyframes bop { 0%,80%,100% { transform: translateY(0); } 40% { transform: translateY(-7px); } }
+.inputwrap { padding: 10px 12px; border-top: 1px solid var(--border); flex-shrink: 0; background: var(--bg2); }
+.inputrow { display: flex; gap: 8px; align-items: flex-end; }
+.txtin { flex: 1; background: var(--bg3); border: 1px solid var(--border2); border-radius: 18px; padding: 9px 14px; color: var(--text); font-size: 14px; outline: none; resize: none; max-height: 90px; line-height: 1.4; font-family: inherit; }
+.txtin::placeholder { color: var(--text3); }
+.sendbtn { width: 40px; height: 40px; border-radius: 50%; background: var(--accent); border: none; color: #fff; font-size: 18px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
+.sendbtn:disabled { opacity: .35; }
+.warnbar { background: rgba(245,166,35,.1); border: 1px solid rgba(245,166,35,.3); border-radius: 8px; padding: 9px 12px; margin-bottom: 8px; font-size: 13px; color: var(--text2); display: none; }
+
+/* ── FEEDBACK ── */
+.fbcard { background: rgba(62,207,142,.08); border: 1px solid rgba(62,207,142,.25); border-radius: var(--r); padding: 18px; margin-bottom: 14px; }
+.fbcard h3 { font-size: 16px; font-weight: 600; margin-bottom: 12px; }
+.fbrow { display: flex; gap: 8px; margin-bottom: 8px; align-items: flex-start; }
+.fbico { font-size: 15px; flex-shrink: 0; }
+.fbtxt { font-size: 14px; color: var(--text2); line-height: 1.5; }
+.xpwon { text-align: center; padding: 14px; background: rgba(79,142,247,.1); border-radius: var(--r2); margin-bottom: 16px; }
+.xpwon .xn { font-size: 34px; font-weight: 700; color: var(--accent); }
+.xpwon .xl { font-size: 13px; color: var(--text2); }
+
+/* ── PODCAST ── */
+.pccard { background: var(--bg3); border: 1px solid var(--border); border-radius: var(--r); padding: 16px; margin-bottom: 12px; }
+.pccard.locked { opacity: .45; }
+.pchdr { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+.pcnum { width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; flex-shrink: 0; background: rgba(139,92,246,.2); border: 1px solid rgba(139,92,246,.4); color: var(--purple); }
+.pcnum.av { background: rgba(79,142,247,.2); border-color: rgba(79,142,247,.4); color: var(--accent); }
+.pcde { font-size: 14px; font-weight: 600; margin-bottom: 2px; }
+.pcuk { font-size: 12px; color: var(--text3); }
+.pcbadge { font-size: 11px; padding: 2px 8px; border-radius: 20px; display: inline-block; margin-bottom: 10px; }
+.pcbadge.av { background: rgba(79,142,247,.15); color: var(--accent); }
+.pcbadge.soon { background: var(--bg4); color: var(--text3); }
+.aplayer { background: var(--bg4); border-radius: var(--r2); padding: 12px; }
+.aplayer audio { width: 100%; height: 40px; }
+.adur { font-size: 11px; color: var(--text3); margin-top: 6px; text-align: right; }
+
+/* ── INFO BOXES ── */
+.infocard { background: var(--bg3); border: 1px solid var(--border); border-radius: var(--r); overflow: hidden; margin-bottom: 12px; }
+.infohdr { padding: 16px; width: 100%; text-align: left; background: none; border: none; display: flex; align-items: flex-start; gap: 12px; }
+.infoico { font-size: 24px; flex-shrink: 0; margin-top: 2px; }
+.infobody { flex: 1; }
+.infohde { font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 3px; line-height: 1.4; }
+.infohuk { font-size: 12px; color: var(--text3); margin-bottom: 5px; line-height: 1.4; }
+.infotde { font-size: 13px; color: var(--text2); line-height: 1.5; }
+.infotuk { font-size: 12px; color: var(--text3); line-height: 1.4; margin-top: 2px; }
+.infochev { font-size: 16px; color: var(--text3); margin-left: auto; flex-shrink: 0; transition: transform .2s; }
+.infoexp { display: none; padding: 0 16px 16px; border-top: 1px solid var(--border); }
+.infoexp.open { display: block; }
+.expde { font-size: 14px; color: var(--text2); line-height: 1.65; margin-bottom: 10px; }
+.expuk { font-size: 13px; color: var(--text3); line-height: 1.6; padding-top: 10px; border-top: 1px solid var(--border); }
+
+/* ── SUPPORT ── */
+.suphdr { text-align: center; padding: 28px 20px 18px; }
+.supico { font-size: 46px; margin-bottom: 14px; }
+.supopts { display: flex; flex-direction: column; gap: 10px; padding: 0 20px 30px; }
+.supopt { background: var(--bg3); border: 1px solid var(--border); border-radius: var(--r); padding: 14px 16px; display: flex; align-items: center; gap: 12px; width: 100%; text-align: left; }
+.supopt:hover { border-color: var(--orange); }
+.sopico { font-size: 22px; width: 36px; text-align: center; flex-shrink: 0; }
+.sopde { font-size: 14px; font-weight: 600; margin-bottom: 1px; }
+.sopuk { font-size: 12px; color: var(--text3); }
+
+/* ── CRISIS ── */
+.crhdr { text-align: center; padding: 28px 22px 18px; }
+.crico { font-size: 52px; margin-bottom: 16px; }
+.crhdr h2 { font-size: 21px; font-weight: 700; color: var(--crisis); margin-bottom: 10px; }
+.crde { color: var(--text2); font-size: 14px; line-height: 1.6; margin-bottom: 6px; }
+.cruk { font-size: 13px; color: var(--text3); }
+.cnum { border-radius: var(--r); padding: 18px; margin: 0 20px 12px; text-align: center; }
+.cnum.em { background: rgba(255,71,87,.12); border: 2px solid var(--crisis); }
+.cnum.co { background: rgba(79,142,247,.12); border: 2px solid var(--accent); }
+.cnum .cn { font-size: 36px; font-weight: 700; margin-bottom: 4px; }
+.cnum.em .cn { color: var(--crisis); }
+.cnum.co .cn { color: var(--accent); }
+.cnum .cde { font-size: 13px; color: var(--text2); margin-bottom: 3px; }
+.cnum .cuk { font-size: 12px; color: var(--text3); margin-bottom: 10px; }
+.cnum a { display: block; padding: 13px; border-radius: var(--r2); color: #fff; font-weight: 600; font-size: 15px; text-decoration: none; }
+.cnum.em a { background: var(--crisis); }
+.cnum.co a { background: var(--accent); }
+
+/* ── PROGRESS ── */
+.lvlcard { background: var(--bg3); border: 1px solid var(--border); border-radius: var(--r); padding: 18px; text-align: center; margin-bottom: 18px; }
+.awgrid { display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; margin-bottom: 18px; }
+.aw { background: var(--bg3); border: 1px solid var(--border); border-radius: var(--r2); padding: 10px; text-align: center; }
+.aw.got { border-color: rgba(255,214,10,.4); background: rgba(255,214,10,.05); }
+.aw.no .awico { filter: grayscale(1); opacity: .25; }
+.awico { font-size: 26px; margin-bottom: 4px; }
+.awde { font-size: 11px; font-weight: 500; color: var(--text2); line-height: 1.3; }
+.awuk { font-size: 10px; color: var(--text3); margin-top: 1px; }
+
+/* ── HELP ── */
+.helpitem { background: var(--bg3); border: 1px solid var(--border); border-radius: var(--r2); padding: 13px; margin-bottom: 8px; }
+.helpitem h3 { font-size: 14px; font-weight: 600; margin-bottom: 3px; }
+.helpitem p { font-size: 13px; color: var(--text2); line-height: 1.45; }
+
+/* ── MOOD ── */
+.moodbar { background: var(--bg3); border: 1px solid rgba(245,166,35,.4); border-radius: var(--r); padding: 14px; margin-bottom: 14px; display: none; }
+.moodemojis { display: flex; justify-content: space-around; margin-top: 10px; }
+.moodebtn { background: none; border: none; font-size: 28px; padding: 8px; border-radius: 50%; }
+
+/* ── LOADING ── */
+.loading { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 40px; gap: 12px; }
+.spinner { width: 32px; height: 32px; border: 3px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: spin .8s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ── TOAST ── */
+#toast { position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%) translateY(14px); background: var(--bg4); border: 1px solid var(--border2); border-radius: 22px; padding: 9px 18px; font-size: 13px; color: var(--text); opacity: 0; transition: all .28s; pointer-events: none; white-space: nowrap; z-index: 9999; }
+#toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+</style>
+</head>
+<body>
+<div id="app">
+
+
+<!-- SPLASH -->
+<div id="s-splash" class="screen on" style="display:flex!important">
+  <div class="scroll">
+    <div class="logo">🇺🇦</div>
+    <h1 style="font-size:26px;font-weight:700;margin-bottom:4px">Deutsch Meistern</h1>
+    <p style="font-size:13px;color:var(--text3);margin-bottom:6px">Вчи Німецьку</p>
+    <p style="color:var(--text2);font-size:14px;line-height:1.6;max-width:300px;margin-bottom:6px">Lerne Deutsch für den echten Alltag.</p>
+    <p style="color:var(--text3);font-size:13px;max-width:300px;margin-bottom:32px">Вчи німецьку для реального повсякденного життя.</p>
+    <button class="btn btn-primary" id="btn-start" style="max-width:300px;margin-bottom:0">Los geht's! · Почнімо! 🚀</button>
+  </div>
+</div>
+
+<!-- ONBOARDING -->
+<div id="s-ob" class="screen">
+  <div class="topbar"><h2 id="ob-h">Profil erstellen</h2></div>
+  <p style="font-size:12px;color:var(--text3);padding:8px 20px 0" id="ob-huk">Створити профіль</p>
+  <div class="prog-wrap" style="padding-top:10px">
+    <div class="prog-lbl" id="ob-lbl">Schritt 1 von 2</div>
+    <div class="prog"><div class="prog-fill" id="ob-fill" style="width:50%"></div></div>
+  </div>
+  <div class="scroll">
+    <p id="ob-qde" style="font-size:17px;font-weight:600;margin-bottom:3px;line-height:1.4"></p>
+    <p id="ob-quk" style="font-size:13px;color:var(--text3);margin-bottom:16px;line-height:1.4"></p>
+    <div id="ob-opts"></div>
+    <button class="btn btn-primary" id="btn-ob-next" disabled>Weiter · Далі →</button>
+  </div>
+</div>
+
+<!-- BRANCHES -->
+<div id="s-branches" class="screen">
+  <div class="topbar"><h2>Was möchtest du tun?</h2></div>
+  <p style="font-size:12px;color:var(--text3);padding:8px 20px 4px">Що ти хочеш зробити?</p>
+  <div class="scroll">
+    <button class="bcard" id="btn-br-chat">
+      <div class="bico" style="background:rgba(79,142,247,.15)">💬</div>
+      <div><div class="bde">Alltagssituationen üben</div><div class="buk">Тренуй побутові ситуації</div><div class="bsub">Im Chat Deutsch sprechen & XP sammeln</div></div>
+    </button>
+    <button class="bcard" id="btn-br-voice">
+      <div class="bico" style="background:rgba(62,207,142,.15)">🎙️</div>
+      <div><div class="bde">Mit Sprache trainieren</div><div class="buk">Тренуй з голосом</div><div class="bsub">Situationen mit Mikrofon üben</div></div>
+    </button>
+    <button class="bcard" id="btn-br-pod">
+      <div class="bico" style="background:rgba(139,92,246,.15)">🎧</div>
+      <div><div class="bde">Warum Sprache alles verändert</div><div class="buk">Чому мова змінює все</div><div class="bsub">8 Podcasts – Deutsch & Ukrainisch</div></div>
+    </button>
+    <button class="bcard" id="btn-br-info">
+      <div class="bico" style="background:rgba(245,166,35,.15)">📚</div>
+      <div><div class="bde">Schule, Arbeit & Alltag in Deutschland</div><div class="buk">Школа, робота і повсякденне життя</div><div class="bsub">Was du wirklich wissen musst</div></div>
+    </button>
+    <div class="moodbar" id="mood-bar">
+      <p style="font-size:14px;font-weight:500">Wie geht es dir heute?</p>
+      <p style="font-size:12px;color:var(--text3)">Як ти себе почуваєш сьогодні?</p>
+      <div class="moodemojis">
+        <button class="moodebtn" id="mood-good">😊</button>
+        <button class="moodebtn" id="mood-ok">😐</button>
+        <button class="moodebtn" id="mood-hard">😔</button>
+        <button class="moodebtn" id="mood-bad">😞</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CHAT HOME -->
+<div id="s-chat" class="screen">
+  <div class="topbar">
+    <button class="back" id="btn-chat-back">←</button>
+    <div><div style="font-size:15px;font-weight:600">Missionen im Chat</div><div style="font-size:11px;color:var(--text3)">Місії в чаті</div></div>
+  </div>
+  <div class="scroll">
+    <div class="banner">
+      <h2>Hallo! 👋</h2>
+      <p style="color:var(--text2);font-size:13px;margin-bottom:10px">Wähle eine Mission · Вибери місію</p>
+      <div class="xpbar"><div class="xpfill" id="xpfill" style="width:0%"></div></div>
+      <div class="xpmeta"><span id="xplv">Level 1</span><span id="xpnums">0 / 150 XP</span></div>
+    </div>
+    <div class="statrow">
+      <div class="statbox"><div class="statval" id="st-done">0</div><div class="statlbl">Missionen<br>Місії</div></div>
+      <div class="statbox"><div class="statval" id="st-xp">0</div><div class="statlbl">XP</div></div>
+      <div class="statbox"><div class="statval" id="st-aw">0</div><div class="statlbl">Awards<br>Нагороди</div></div>
+    </div>
+    <div class="sectitle">Missionen · Місії</div>
+    <div id="mlist"></div>
+  </div>
+</div>
+
+<!-- MISSION SPARRING -->
+<div id="s-mission" class="screen">
+  <div class="topbar">
+    <button class="back" id="btn-m-back">←</button>
+    <div><div id="m-tde" style="font-size:15px;font-weight:600"></div><div id="m-tuk" style="font-size:11px;color:var(--text3)"></div></div>
+  </div>
+  <div id="m-pre" style="flex:1;overflow-y:auto;padding:20px">
+    <div class="sitbox">
+      <div class="sitlbl">Situation</div>
+      <div class="sitde" id="m-sde"></div>
+      <div id="m-suk-wrap"></div>
+    </div>
+    <div class="sectitle" style="margin-bottom:8px">Schlüsselsätze · Ключові фрази</div>
+    <div class="phrases" id="m-phrases"></div>
+    <div id="m-phrases-uk-wrap"></div>
+    <p id="m-xptxt" style="text-align:center;color:var(--text2);font-size:13px;margin-bottom:16px"></p>
+    <button class="btn btn-primary" id="btn-m-start">Rollenspiel starten · Почати рольову гру 🎭</button>
+  </div>
+  <div id="m-chat-area" style="display:none;flex:1;flex-direction:column;min-height:0;overflow:hidden">
+    <div class="chatarea" id="chatmsgs"></div>
+    <div class="inputwrap">
+      <div class="warnbar" id="warnbar"></div>
+      <div class="inputrow">
+        <textarea class="txtin" id="txtin" placeholder="Deine Antwort auf Deutsch…" rows="1"></textarea>
+        <button class="sendbtn" id="btn-send">↑</button>
+      </div>
+    </div>
+  </div>
+  <div id="m-fb" style="display:none;flex:1;overflow-y:auto;padding:20px">
+    <div id="fbcontent"></div>
+    <button class="btn btn-primary" id="btn-nextround">Nächste Runde 🔄</button>
+    <button class="btn btn-secondary" id="btn-fb-back">← Zurück</button>
+  </div>
+</div>
+
+<!-- VOICE HOME -->
+<div id="s-voice" class="screen">
+  <div class="topbar">
+    <button class="back" id="btn-voice-back">←</button>
+    <div><div style="font-size:15px;font-weight:600">Mit Sprache trainieren</div><div style="font-size:11px;color:var(--text3)">Тренуй з голосом</div></div>
+  </div>
+  <div class="scroll">
+    <div style="background:rgba(62,207,142,.1);border:1px solid rgba(62,207,142,.25);border-radius:var(--r);padding:16px;margin-bottom:20px">
+      <p style="font-size:14px;font-weight:600;margin-bottom:4px">🎙️ Sprich Deutsch – direkt ins Mikrofon</p>
+      <p style="font-size:13px;color:var(--text3)">Говори по-німецьки – прямо в мікрофон</p>
+    </div>
+    <div class="sectitle">Missionen · Місії</div>
+    <div id="vmlist"></div>
+  </div>
+</div>
+
+<!-- VOICE MISSION -->
+<div id="s-vmission" class="screen">
+  <div class="topbar">
+    <button class="back" id="btn-vm-back">←</button>
+    <div><div id="vm-tde" style="font-size:15px;font-weight:600"></div><div id="vm-tuk" style="font-size:11px;color:var(--text3)"></div></div>
+  </div>
+  <div id="vm-pre" style="flex:1;overflow-y:auto;padding:20px">
+    <div class="sitbox">
+      <div class="sitlbl">Situation</div>
+      <div class="sitde" id="vm-sde"></div>
+      <div id="vm-suk-wrap"></div>
+    </div>
+    <div id="vm-httpsinfo" style="display:none;background:rgba(79,142,247,.1);border:1px solid rgba(79,142,247,.3);border-radius:var(--r);padding:16px;margin-bottom:16px">
+      <p style="font-size:14px;font-weight:600;margin-bottom:8px">🔒 HTTPS erforderlich · Потрібен HTTPS</p>
+      <p style="font-size:13px;color:var(--text2);line-height:1.6;margin-bottom:8px">Das Mikrofon funktioniert nur über HTTPS – nicht über file://</p>
+      <p style="font-size:13px;color:var(--text2);line-height:1.6;margin-bottom:10px">Мікрофон працює тільки через HTTPS</p>
+      <p style="font-size:13px;font-weight:600;margin-bottom:4px">So geht's:</p>
+      <p style="font-size:13px;color:var(--text2);line-height:1.8">1. Gehe zu <strong style="color:var(--accent)">netlify.com/drop</strong><br>2. Lade die Datei hoch<br>3. Öffne die https://... URL<br>4. Mikrofon funktioniert sofort ✓</p>
+    </div>
+    <button class="btn btn-primary" id="btn-vm-start" style="background:var(--green);color:#0f2e1e">🎙️ Starten · Почати</button>
+  </div>
+  <div id="vm-active" style="display:none;flex:1;flex-direction:column;align-items:center;justify-content:center;padding:24px;gap:20px">
+    <div id="vm-stde" style="font-size:16px;font-weight:600;text-align:center"></div>
+    <div id="vm-stuk" style="font-size:13px;color:var(--text3);text-align:center"></div>
+    <div id="vm-aitxt" style="background:var(--bg3);border:1px solid var(--border);border-radius:var(--r);padding:16px;font-size:15px;line-height:1.6;width:100%;min-height:80px;text-align:center;color:var(--text2)">Warte auf KI… · Очікую ШІ…</div>
+    <button id="btn-vm-mic" style="width:80px;height:80px;border-radius:50%;background:var(--green);border:none;font-size:32px;display:flex;align-items:center;justify-content:center">🎙️</button>
+    <p id="vm-trans" style="font-size:13px;color:var(--text3);text-align:center;min-height:20px;max-width:320px"></p>
+    <button class="btn btn-secondary" id="btn-vm-end" style="width:auto;padding:10px 24px">Session beenden · Завершити</button>
+  </div>
+</div>
+
+<!-- PODCAST -->
+<div id="s-pod" class="screen">
+  <div class="topbar">
+    <button class="back" id="btn-pod-back">←</button>
+    <div><div style="font-size:15px;font-weight:600">Warum Sprache alles verändert</div><div style="font-size:11px;color:var(--text3)">Чому мова змінює все</div></div>
+  </div>
+  <div class="scroll">
+    <div style="background:rgba(139,92,246,.1);border:1px solid rgba(139,92,246,.25);border-radius:var(--r);padding:14px;margin-bottom:20px">
+      <p style="font-size:14px;font-weight:600;margin-bottom:3px">8 Podcasts · 8 подкастів</p>
+      <p style="font-size:13px;color:var(--text3)">Deutsch zuerst, dann Ukrainisch</p>
+    </div>
+    <div id="podlist"></div>
+  </div>
+</div>
+
+<!-- INFO -->
+<div id="s-info" class="screen">
+  <div class="topbar">
+    <button class="back" id="btn-info-back">←</button>
+    <div><div style="font-size:15px;font-weight:600">Schule, Arbeit & Alltag</div><div style="font-size:11px;color:var(--text3)">Школа, робота і повсякденне життя</div></div>
+  </div>
+  <div class="scroll">
+    <div style="background:rgba(245,166,35,.1);border:1px solid rgba(245,166,35,.25);border-radius:var(--r);padding:14px;margin-bottom:20px">
+      <p style="font-size:14px;font-weight:600;margin-bottom:3px">Was du wirklich wissen musst</p>
+      <p style="font-size:13px;color:var(--text3)">Що тобі справді потрібно знати</p>
+    </div>
+    <div id="infolist"></div>
+  </div>
+</div>
+
+<!-- PROGRESS -->
+<div id="s-prog" class="screen">
+  <div class="topbar"><h2>Fortschritt · Прогрес</h2></div>
+  <div class="scroll">
+    <div class="lvlcard">
+      <div style="font-size:12px;color:var(--text3);margin-bottom:4px">Level · Рівень</div>
+      <div style="font-size:38px;font-weight:700;color:var(--accent)" id="lv-num">1</div>
+      <div style="font-size:13px;color:var(--text2);margin-bottom:10px" id="lv-xp">0 XP gesamt</div>
+      <div class="xpbar"><div class="xpfill" id="xpfill2" style="width:0%"></div></div>
+    </div>
+    <div class="sectitle">Awards · Нагороди</div>
+    <div class="awgrid" id="awgrid"></div>
+    <div class="sectitle">Statistiken · Статистика</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px" id="statgrid"></div>
+  </div>
+  <div class="botnav">
+    <button class="navbtn" id="pnav-home"><div class="navico">🏠</div><span>Home</span></button>
+    <button class="navbtn on"><div class="navico">📊</div><span>Fortschritt</span></button>
+    <button class="navbtn" id="pnav-help"><div class="navico">❓</div><span>Hilfe</span></button>
+  </div>
+</div>
+
+<!-- HELP -->
+<div id="s-help" class="screen">
+  <div class="topbar"><h2>Hilfe & Infos · Допомога</h2></div>
+  <div class="scroll">
+    <div class="sectitle">Notfall · Екстрений випадок</div>
+    <div class="cnum em" style="margin:0 0 10px">
+      <div class="cn">112</div>
+      <p class="cde">Polizei · Feuerwehr · Rettungsdienst</p>
+      <p class="cuk">Поліція · Пожежна · Швидка допомога</p>
+      <a href="tel:112">📞 112 anrufen · Зателефонувати</a>
+    </div>
+    <div class="cnum co" style="margin:0 0 18px">
+      <div class="cn">116 111</div>
+      <p class="cde">Telefonseelsorge · kostenlos · anonym · 24/7</p>
+      <p class="cuk">Телефонна консультація · безкоштовно · анонімно</p>
+      <a href="tel:116111">📞 116 111 anrufen · Зателефонувати</a>
+    </div>
+    <div class="sectitle">FAQ</div>
+    <div class="helpitem"><h3>Wie funktioniert das Rollenspiel?</h3><p>Du chattest auf Deutsch mit einer KI. Fehler sind OK.<br><span style="color:var(--text3)">Спілкуєшся з ШІ по-німецьки. Помилки – нормально.</span></p></div>
+    <div class="helpitem"><h3>Sind meine Daten sicher?</h3><p>Ja. Kein Konto. Alles bleibt lokal im Browser.<br><span style="color:var(--text3)">Так. Немає акаунту. Все залишається в браузері.</span></p></div>
+    <div class="helpitem"><h3>Was ist die Telefonseelsorge?</h3><p>116 111 – kostenlos, anonym, 24/7. Auch auf Ukrainisch.<br><span style="color:var(--text3)">116 111 – безкоштовно, анонімно, цілодобово. Також українською.</span></p></div>
+    <div class="sectitle" style="margin-top:8px">Hilfe vor Ort – Kreis Miesbach</div>
+    <div class="helpitem"><h3>Caritas Miesbach</h3><p>Beratung, Integration · Tel: 08025 996-0</p></div>
+    <div class="helpitem"><h3>AWO Migrationsberatung</h3><p>Behördengänge, Wohnen, Arbeit</p></div>
+    <div class="helpitem" style="margin-bottom:18px"><h3>Jugendmigrationsdienst</h3><p>Für junge Menschen bis 27 Jahre</p></div>
+    <button class="btn btn-danger" id="btn-help-crisis">🆘 Sofort Hilfe · Негайна допомога</button>
+  </div>
+  <div class="botnav">
+    <button class="navbtn" id="hnav-home"><div class="navico">🏠</div><span>Home</span></button>
+    <button class="navbtn" id="hnav-prog"><div class="navico">📊</div><span>Fortschritt</span></button>
+    <button class="navbtn on"><div class="navico">❓</div><span>Hilfe</span></button>
+  </div>
+</div>
+
+<!-- SUPPORT -->
+<div id="s-support" class="screen">
+  <div class="topbar"><button class="back" id="btn-sup-back">←</button><h2>Unterstützung · Підтримка</h2></div>
+  <div class="scroll">
+    <div class="suphdr">
+      <div class="supico">🤝</div>
+      <h2 style="font-size:20px;font-weight:700;margin-bottom:4px">Pause ist OK</h2>
+      <p style="font-size:13px;color:var(--text3);margin-bottom:8px">Зробити паузу – нормально</p>
+      <p style="color:var(--text2);font-size:14px;line-height:1.6">Manchmal ist alles zu viel.</p>
+      <p style="color:var(--text3);font-size:13px;margin-top:4px">Іноді все занадто.</p>
+    </div>
+  </div>
+  <div class="supopts">
+    <button class="supopt" id="btn-sup-mission"><div class="sopico">🌱</div><div><div class="sopde">Kurze leichte Mission</div><div class="sopuk">Коротка легка місія</div></div></button>
+    <button class="supopt" id="btn-sup-help"><div class="sopico">📞</div><div><div class="sopde">Hilfsangebote</div><div class="sopuk">Варіанти допомоги</div></div></button>
+    <button class="supopt" id="btn-sup-pause"><div class="sopico">☕</div><div><div class="sopde">Pause machen</div><div class="sopuk">Зробити паузу</div></div></button>
+    <button class="supopt" id="btn-sup-crisis" style="border-color:rgba(255,71,87,.35)"><div class="sopico">🆘</div><div><div class="sopde" style="color:var(--crisis)">Sofort Hilfe</div><div class="sopuk">Негайна допомога</div></div></button>
+  </div>
+</div>
+
+<!-- CRISIS -->
+<div id="s-crisis" class="screen">
+  <div class="scroll">
+    <div class="crhdr">
+      <div class="crico">❤️</div>
+      <h2>Du bist nicht allein · Ти не один</h2>
+      <p class="crde">Es gibt Menschen, die dir helfen. Ruf jetzt an – kostenlos, anonym, sofort.</p>
+      <p class="cruk">Є люди, які можуть допомогти. Зателефонуй зараз – безкоштовно, анонімно.</p>
+    </div>
+    <div class="cnum em">
+      <div class="cn">112</div>
+      <p class="cde">Notruf – bei akuter Gefahr</p>
+      <p class="cuk">Екстрений виклик – при гострій небезпеці</p>
+      <a href="tel:112">📞 112 anrufen · Зателефонувати 112</a>
+    </div>
+    <div class="cnum co">
+      <div class="cn">116 111</div>
+      <p class="cde">Telefonseelsorge – kostenlos, anonym, 24 Stunden</p>
+      <p class="cuk">Телефонна консультація – безкоштовно, анонімно, 24 год</p>
+      <a href="tel:116111">📞 116 111 anrufen · Зателефонувати</a>
+    </div>
+    <div style="padding:16px 20px 30px">
+      <button class="btn btn-secondary" id="btn-safe">Ich bin jetzt sicher ✓ · Я в безпеці ✓</button>
+    </div>
+  </div>
+</div>
+
+</div>
+<div id="toast"></div>
+
+<script>
+// ═══════════════════════════════════════════════
+// DATA
+// ═══════════════════════════════════════════════
+var OBS = [
+  { qde:'Was ist dein Deutschniveau?', quk:'Який твій рівень німецької?',
+    opts:[
+      {v:'A1', de:'A1 – Anfänger',        uk:'A1 – Початківець',       sde:'Ich kann kaum Deutsch',        suk:'Майже не знаю'},
+      {v:'A2', de:'A2 – Grundkenntnisse', uk:'A2 – Базові знання',      sde:'Ich kenne Basiswörter',        suk:'Знаю базові слова'},
+      {v:'B1', de:'B1 – Mittelstufe',     uk:'B1 – Середній рівень',    sde:'Einfache Gespräche möglich',   suk:'Прості розмови'}
+    ]},
+  { qde:'Was motiviert dich am meisten?', quk:'Що тебе найбільше мотивує?',
+    opts:[
+      {v:'competitor', de:'🏆 Besser sein als andere', uk:'🏆 Бути кращим за інших', sde:'Rankings, Wettbewerb',   suk:'Рейтинги'},
+      {v:'builder',    de:'🔨 Zukunft aufbauen',       uk:'🔨 Будувати майбутнє',   sde:'Fortschritt, Stabilität', suk:'Прогрес'},
+      {v:'connector',  de:'🤝 Dazugehören',            uk:'🤝 Належати до спільноти',sde:'Kontakte, Gemeinschaft', suk:'Контакти'},
+      {v:'explorer',   de:'🎲 Neues entdecken',        uk:'🎲 Відкривати нове',     sde:'Abwechslung, Spaß',      suk:'Різноманіття'}
+    ]}
+];
+
+var MISSIONS = [
+  { id:'intro', icon:'👋', bg:'rgba(79,142,247,.15)',
+    tde:'Begrüßen & Vorstellen', tuk:'Привітання та знайомство', xp:50,
+    sde:'Du kommst in eine neue Schule. Der Lehrer bittet dich, dich vor der Klasse vorzustellen.',
+    suk:'Ти приходиш до нової школи. Вчитель просить тебе представитися перед класом.',
+    pde:['Hallo, ich heiße…','Ich komme aus der Ukraine.','Ich wohne in Miesbach.','Freut mich!'],
+    puk:['Привіт, мене звати…','Я з України.','Я живу в Місбаху.','Радий познайомитись!'],
+    sys:'Du bist Lehrer Herr Müller. Ein ukrainischer Schüler stellt sich vor. Freundlich, Folgefragen A1-A2, max 3 Sätze. Fehler sanft korrigieren. Nach 5 Austauschen positiv beenden.'
+  },
+  { id:'supermarkt', icon:'🛒', bg:'rgba(62,207,142,.15)',
+    tde:'Supermarkt', tuk:'Супермаркет', xp:60,
+    sde:'Du bist im Supermarkt und kannst ein Produkt nicht finden. Du fragst eine Mitarbeiterin.',
+    suk:'Ти в супермаркеті і не можеш знайти товар. Ти запитуєш у працівниці.',
+    pde:['Entschuldigung, wo ist…?','Ich suche…','In welchem Gang?','Danke schön!'],
+    puk:['Вибачте, де знаходиться…?','Я шукаю…','В якому ряді?','Дуже дякую!'],
+    sys:'Du bist Supermarktmitarbeiterin Frau Schmidt. Hilfsbereit, kurze Sätze A1-A2. Erkläre wo Produkte sind. Nach 5 Austauschen freundlich beenden.'
+  },
+  { id:'bus', icon:'🚌', bg:'rgba(245,166,35,.15)',
+    tde:'Bus & Bahn', tuk:'Автобус і потяг', xp:70,
+    sde:'Du willst mit dem Bus nach München fahren. Du fragst am Schalter nach einem Ticket.',
+    suk:'Ти хочеш поїхати автобусом до Мюнхена. Ти питаєш на касі про квиток.',
+    pde:['Ein Ticket nach München, bitte.','Wann fährt der nächste Bus?','Was kostet das?','Danke!'],
+    puk:['Один квиток до Мюнхена, будь ласка.','Коли відходить наступний автобус?','Скільки це коштує?','Дякую!'],
+    sys:'Du bist Bahnmitarbeiter Miesbach. Bus stündlich, ~10€, ~1h nach München. Einfaches Deutsch A1-B1. Nach 5 Austauschen beenden.'
+  }
+];
+
+var PODCASTS = [
+  { n:1, av:true,  tde:'Warum die erste Phrase wichtiger ist als perfekte Grammatik', tuk:'Чому перша фраза важливіша за ідеальну граматику', dur:'12:44', src:'' },
+  { n:2, av:false, tde:'Kein Deutsch, kein Job – wie Sprache deine Zukunft öffnet',   tuk:'Без мови – без роботи: як мова відкриває твоє майбутнє' },
+  { n:3, av:false, tde:'Im Supermarkt, Bus und Amt: Diese 10 Sätze retten dich',       tuk:'У супермаркеті, автобусі та відомстві: ці 10 фраз тебе рятують' },
+  { n:4, av:false, tde:'Respekt verdienen: Wie gute Sprache dich ernst nehmen lässt',  tuk:'Заслужити повагу: як гарна мова змушує сприймати тебе серйозно' },
+  { n:5, av:false, tde:'Schule in Deutschland – dein Weg, auch wenn du spät anfängst', tuk:'Школа в Німеччині – твій шлях, навіть якщо ти починаєш пізно' },
+  { n:6, av:false, tde:'Ausbildung statt Warten: Wie du in 3 Jahren Fachmann wirst',   tuk:'Навчання замість очікування: як за 3 роки стати фахівцем' },
+  { n:7, av:false, tde:'Fehler sind keine Schwäche – sie sind dein schnellster Lehrer',tuk:'Помилки – не слабкість, вони – твій найшвидший вчитель' },
+  { n:8, av:false, tde:'Deine Zukunft hier: Wie Sprache Selbstvertrauen aufbaut',      tuk:'Твоє майбутнє тут: як мова будує впевненість у собі' }
+];
+
+var INFOS = [
+  { ico:'🪜', hde:'Das Schulsystem ist keine Einbahnstraße – du kannst immer nach oben', huk:'Школа – не глухий кут: ти завжди можеш піднятися вище',
+    tde:'Mittelschule, Realschule, Gymnasium – und immer ein Weg zurück nach oben.',
+    tuk:'Середня школа, реальна школа, гімназія – і завжди є шлях нагору.',
+    fde:'Das Schulsystem ist wie eine Leiter.<br><br><strong>Mittelschule:</strong> Basics für Handwerk. Mit dem „Quali" startest du in die Ausbildung.<br><br><strong>Realschule:</strong> „Mittlere Reife" – Ticket für anspruchsvolle Berufe.<br><br><strong>Gymnasium:</strong> Abitur – direktester Weg zur Universität.<br><br><strong>Wichtig:</strong> Das System ist durchlässig. Auch mit Mittelschule kannst du später noch das Abitur machen.',
+    fuk:'Система освіти схожа на драбину.<br><br><strong>Mittelschule:</strong> Основи для ремісничих професій. З «Quali» починаєш Ausbildung.<br><br><strong>Realschule:</strong> «Mittlere Reife» – квиток до престижних професій.<br><br><strong>Gymnasium:</strong> Abitur – найпряміший шлях до університету.<br><br><strong>Важливо:</strong> Система «проникна». Навіть зі середньої школи можна пізніше отримати Abitur.'
+  },
+  { ico:'🏭', hde:'In 3 Jahren Fachmann – und du verdienst ab dem ersten Monat', huk:'За 3 роки – фахівець. І зарплата вже з першого місяця',
+    tde:'Die duale Ausbildung: 3-4 Tage Praxis, 1-2 Tage Theorie – und echtes Geld.',
+    tuk:'Дуальне навчання: 3-4 дні практики, 1-2 дні теорії – і справжні гроші.',
+    fde:'<strong>Praxis:</strong> 3–4 Tage/Woche in echter Firma.<br><br><strong>Theorie:</strong> 1–2 Tage Berufsschule.<br><br><strong>Geld:</strong> Du verdienst ab dem ersten Monat. Du kannst dich und deine Mutter unterstützen.<br><br>Nach 3 Jahren bist du Geselle oder Fachkraft – in Deutschland extrem wertvoll.',
+    fuk:'<strong>Практика:</strong> 3-4 дні на тиждень у фірмі.<br><br><strong>Теорія:</strong> 1-2 дні у Berufsschule.<br><br><strong>Гроші:</strong> Заробляєш вже з першого місяця. Можеш підтримувати маму.<br><br>Через 3 роки – Geselle або фахівець. У Німеччині цінується надзвичайно.'
+  },
+  { ico:'🌉', hde:'Die FOS: Dein geheimer Weg zum Studium ohne Gymnasium', huk:'FOS – твій таємний шлях до вищої освіти без гімназії',
+    tde:'Realschulabschluss? Die FOS bringt dich in 2 Jahren zum Fachabitur.',
+    tuk:'Є атестат реальної школи? FOS за 2 роки приведе тебе до Fachabitur.',
+    fde:'<strong>Was ist das?</strong> Schule die Theorie und Praxis mischt. In Klasse 11 oft Langzeitpraktika.<br><br><strong>Ziel:</strong> Fachabitur.<br><br><strong>Warum wichtig?</strong> Mit Fachabitur darfst du an Fachhochschulen studieren. Der beste Weg wenn du nicht ans Gymnasium willst aber später Bachelor möchtest.',
+    fuk:'<strong>Що це?</strong> Школа, що поєднує теорію та практику. В 11-му класі – тривала практика.<br><br><strong>Мета:</strong> Fachabitur.<br><br><strong>Чому важливо?</strong> З Fachabitur можна вчитися у Fachhochschule – найкращий шлях якщо не хочеш до гімназії але плануєш бакалавра.'
+  },
+  { ico:'🎓', hde:'Bachelor ohne Abitur? So funktioniert Studieren in Deutschland wirklich', huk:'Бакалавр без Abitur? Ось як насправді працює навчання в Німеччині',
+    tde:'Hochschule oder Uni – was du brauchst, was es bringt.',
+    tuk:'Університет чи Hochschule – що потрібно, що дає.',
+    fde:'<strong>Voraussetzung:</strong> Abitur oder Fachabitur (von der FOS).<br><br><strong>Bachelor:</strong> 3–3,5 Jahre. Erster akademischer Grad.<br><br><strong>Warum?</strong> Akademiker verdienen langfristig das meiste Geld.<br><br><strong>Achtung:</strong> Du brauchst sehr gutes Deutsch (C1) um Vorlesungen zu folgen.',
+    fuk:'<strong>Умова:</strong> Abitur або Fachabitur (після FOS).<br><br><strong>Бакалавр:</strong> 3–3,5 роки. Перший академічний ступінь.<br><br><strong>Навіщо?</strong> Люди з вищою освітою заробляють найбільше.<br><br><strong>Увага:</strong> Потрібне дуже гарне знання мови (C1).'
+  },
+  { ico:'🔧', hde:'Meister = Bachelor: Warum Karriere ohne Uni in Deutschland goldwert ist', huk:'Майстер = бакалавр: чому кар'єра без університету – на вагу золота',
+    tde:'Mit dem Meisterbrief stehst du rechtlich auf der gleichen Stufe wie ein Bachelor.',
+    tuk:'З дипломом майстра ти юридично на тому ж рівні, що й бакалавр.',
+    fde:'<strong>Meister:</strong> Nach der Ausbildung – darfst Lehrlinge ausbilden und eigene Firma gründen.<br><br><strong>Techniker:</strong> Spezialisierung auf komplexe Maschinen.<br><br><strong>Wichtig:</strong> Meisterbrief = Bachelor (gesetzlich gleichgestellt). Fantastische Jobchancen.',
+    fuk:'<strong>Майстер:</strong> Після навчання – маєш право навчати учнів і відкрити власну фірму.<br><br><strong>Технік:</strong> Спеціалізація на складних машинах.<br><br><strong>Важливо:</strong> Диплом майстра = бакалавр (закріплено законом). Фантастичні шанси на роботу.'
+  },
+  { ico:'📄', hde:'Dein ukrainischer Abschluss zählt – wenn du diesen einen Schritt machst', huk:'Твій украïнський атестат рахується – якщо зробиш цей один крок',
+    tde:'Zeugnisanerkennung: Wie du deine Schulzeit in Deutschland offiziell anerkennst.',
+    tuk:'Визнання документів: як офіційно підтвердити своє навчання.',
+    fde:'<strong>Schritt 1:</strong> Dokumente von staatlich anerkanntem Übersetzer übersetzen lassen.<br><br><strong>Schritt 2:</strong> Zeugnisanerkennungsstelle vergleicht deine Dokumente mit deutschem System.<br><br><strong>Ergebnis:</strong> „Dein Abschluss ist wie Realschule" oder „wie Abitur".<br><br>Nur so wissen Arbeitgeber und Schulen was du kannst.',
+    fuk:'<strong>Крок 1:</strong> Переклад документів присяжним перекладачем.<br><br><strong>Крок 2:</strong> Служба визнання порівнює твої документи з німецькою системою.<br><br><strong>Результат:</strong> «Твій атестат відповідає реальній школі» або «гімназії».<br><br>Тільки так роботодавці знатимуть твій рівень.'
+  },
+  { ico:'⏳', hde:'Warum die Bürokratie nervt – und warum Geduld deine geheime Waffe ist', huk:'Чому бюрократія дратує – і чому терпіння є твоєю таємною зброєю',
+    tde:'Integration ist kein Sprint. Wer die Regeln kennt, bekommt am Ende die Zusage.',
+    tuk:'Інтеграція – не спринт. Хто знає правила, той отримує результат.',
+    fde:'<strong>Regelorientierung:</strong> In Deutschland sind Regeln heilig. Das System wirkt starr, ist aber fair.<br><br><strong>Sprache ist Waffe:</strong> Ohne Deutsch nur schlecht bezahlte Hilfsjobs. Die Sprache öffnet alles.<br><br><strong>Geduld:</strong> Dein Ziel: stabiles Leben für dich und deine Familie.',
+    fuk:'<strong>Правила:</strong> У Німеччині правила – священні. Система жорстка, але справедлива.<br><br><strong>Мова – зброя:</strong> Без мови – тільки низькооплачувана робота. Мова відкриває все.<br><br><strong>Терпіння:</strong> Твоя мета: стабільне життя для тебе та родини.'
+  },
+  { ico:'🚪', hde:'Ein Praktikum kann dein Leben verändern – und es kostet dich nur 2 Wochen', huk:'Практика може змінити твоє життя – і це коштує лише 2 тижні',
+    tde:'Wie ein unbezahltes Praktikum oft zur bezahlten Ausbildung wird.',
+    tuk:'Як безоплатна практика часто перетворюється на оплачуване навчання.',
+    fde:'<strong>Praktikum:</strong> 1–2 Wochen kostenlos in Firma. Du zeigst: pünktlich, motiviert, lernbereit.<br>Oft sagen Chefs: „Wir machen eine Ausbildung!"<br><br><strong>Minijob:</strong> Hilft deiner Mutter finanziell.<br><br><strong>Achtung:</strong> Job niemals wichtiger als Sprachkurs! Schnelles Geld = wenig Geld in Zukunft.',
+    fuk:'<strong>Практика:</strong> 1-2 тижні безкоштовно у фірмі. Показуєш: пунктуальний, мотивований.<br>Часто: «Оформимо навчання!»<br><br><strong>Minijob:</strong> Допомога мамі фінансово.<br><br><strong>Обережно:</strong> Робота ніколи важливішою за мовні курси! Швидкі гроші = мало грошей у майбутньому.'
+  }
+];
+
+var AWARDS = [
+  {sl:'intro',     ico:'👋', de:'Erster Dialog',      uk:'Перший діалог'},
+  {sl:'supermarkt',ico:'🛒', de:'Supermarkt-Profi',   uk:'Профі супермаркету'},
+  {sl:'bus',       ico:'🚌', de:'Ticket-Master',       uk:'Майстер квитків'},
+  {sl:'brave',     ico:'💪', de:'Mut gezeigt',         uk:'Проявив сміливість'},
+  {sl:'level2',    ico:'⭐', de:'Level 2',             uk:'Рівень 2'},
+  {sl:'all3',      ico:'🏆', de:'Alle 3 Missionen',   uk:'Всі 3 місії'},
+];
+
+// ═══════════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════════
+var obStep=0, obSels={}, profile={level:'A1', type:'builder'};
+var cur=null, round=0, hist=[];
+var xp=0, lvl=1, streak=1, done=0, earned=[];
+var voiceCur=null, vmHist=[], rec=null;
+
+// ═══════════════════════════════════════════════
+// SCREEN ROUTER – the core fix
+// ═══════════════════════════════════════════════
+function show(id) {
+  // Hide ALL screens
+  var all = document.querySelectorAll('.screen');
+  for (var i=0; i<all.length; i++) {
+    all[i].className = 'screen';
+    all[i].style.display = 'none';
+  }
+  // Show target
+  var t = document.getElementById(id);
+  if (t) {
+    t.className = 'screen on';
+    t.style.display = 'flex';
+  }
+  // Scroll to top
+  window.scrollTo(0,0);
+  // Render dynamic content
+  if (id==='s-chat')   renderChat();
+  if (id==='s-prog')   renderProg();
+  if (id==='s-pod')    renderPod();
+  if (id==='s-info')   renderInfo();
+  if (id==='s-voice')  renderVoice();
+}
+
+function toast(msg) {
+  var el=document.getElementById('toast');
+  el.textContent=msg; el.classList.add('show');
+  setTimeout(function(){ el.classList.remove('show'); }, 3000);
+}
+
+// ═══════════════════════════════════════════════
+// BILINGUAL HELPER
+// ═══════════════════════════════════════════════
+function bilingualWrap(wrapId, ukText, inlineStyle) {
+  var wrap = document.getElementById(wrapId);
+  if (!wrap) return;
+  var lv = profile.level || 'A1';
+  if (lv === 'A1') {
+    wrap.innerHTML = '<div class="situk"' + (inlineStyle?' style="'+inlineStyle+'"':'') + '>' + ukText + '</div>';
+  } else {
+    var uid = wrapId + '-u';
+    wrap.innerHTML =
+      '<button class="trbtn" onclick="var e=document.getElementById(''+uid+'');var show=e.style.display==='none';e.style.display=show?'block':'none';this.textContent=show?'🙈 Ausblenden':'🇺🇦 Übersetzen'">🇺🇦 Übersetzen</button>'+
+      '<div class="situk" id="'+uid+'" style="display:none;margin-top:6px">'+ukText+'</div>';
+  }
+}
+
+// ═══════════════════════════════════════════════
+// ONBOARDING
+// ═══════════════════════════════════════════════
+function renderOb() {
+  var s = OBS[obStep];
+  var tot = OBS.length;
+  document.getElementById('ob-lbl').textContent = 'Schritt '+(obStep+1)+' von '+tot+' · Крок '+(obStep+1)+' з '+tot;
+  document.getElementById('ob-fill').style.width = ((obStep+1)/tot*100)+'%';
+  document.getElementById('ob-qde').textContent = s.qde;
+  document.getElementById('ob-quk').textContent = s.quk;
+  var c = document.getElementById('ob-opts');
+  c.innerHTML = '';
+  s.opts.forEach(function(o) {
+    var b = document.createElement('button');
+    b.className = 'opt' + (obSels[obStep]===o.v ? ' sel' : '');
+    b.innerHTML = '<div class="ode">'+o.de+'</div><div class="ouk">'+o.uk+'</div>'+(o.sde?'<div class="osub">'+o.sde+' · '+o.suk+'</div>':'');
+    b.addEventListener('click', function() {
+      c.querySelectorAll('.opt').forEach(function(x){ x.classList.remove('sel'); });
+      b.classList.add('sel');
+      obSels[obStep] = o.v;
+      document.getElementById('btn-ob-next').disabled = false;
+    });
+    c.appendChild(b);
+  });
+  var nb = document.getElementById('btn-ob-next');
+  nb.disabled = (obSels[obStep] === undefined);
+}
+
+function obNext() {
+  if (obSels[obStep] === undefined) return;
+  var keys = ['level','type'];
+  profile[keys[obStep]] = obSels[obStep];
+  if (obStep < OBS.length-1) {
+    obStep++; renderOb();
+  } else {
+    show('s-branches');
+    if (profile.type !== 'competitor') {
+      document.getElementById('mood-bar').style.display = 'block';
+    }
+  }
+}
+
+// ═══════════════════════════════════════════════
+// CHAT HOME
+// ═══════════════════════════════════════════════
+function renderChat() {
+  var xpMax = lvl*150;
+  document.getElementById('xpfill').style.width = Math.min(100,xp/xpMax*100)+'%';
+  document.getElementById('xplv').textContent = 'Level '+lvl;
+  document.getElementById('xpnums').textContent = xp+' / '+xpMax+' XP';
+  document.getElementById('st-done').textContent = done;
+  document.getElementById('st-xp').textContent = xp;
+  document.getElementById('st-aw').textContent = earned.length;
+  var ml = document.getElementById('mlist');
+  ml.innerHTML = '';
+  MISSIONS.forEach(function(m) {
+    var isDone = earned.indexOf(m.id) !== -1;
+    var b = document.createElement('button');
+    b.className = 'mcard'+(isDone?' done':'');
+    b.innerHTML = '<div class="mico" style="background:'+m.bg+'">'+m.icon+'</div>'+
+      '<div style="flex:1"><div class="mde">'+m.tde+'</div><div class="muk">'+m.tuk+'</div></div>'+
+      '<div class="mbadge">'+(isDone?'✓':'→')+'</div>';
+    b.addEventListener('click', (function(id){ return function(){ openMission(id); }; })(m.id));
+    ml.appendChild(b);
+  });
+}
+
+// ═══════════════════════════════════════════════
+// MISSION SPARRING
+// ═══════════════════════════════════════════════
+function openMission(id) {
+  cur = null;
+  for (var i=0; i<MISSIONS.length; i++) { if (MISSIONS[i].id===id) { cur=MISSIONS[i]; break; } }
+  if (!cur) return;
+  round=0; hist=[];
+  document.getElementById('m-tde').textContent = cur.tde;
+  document.getElementById('m-tuk').textContent = cur.tuk;
+  document.getElementById('m-sde').textContent = cur.sde;
+  document.getElementById('m-xptxt').textContent = cur.xp+' XP bei Abschluss · за виконання';
+  bilingualWrap('m-suk-wrap', cur.suk, '');
+  // Phrases
+  var ph = document.getElementById('m-phrases');
+  var lv = profile.level || 'A1';
+  if (lv === 'A1') {
+    ph.innerHTML = cur.pde.map(function(p,i){
+      return '<span class="ptag">'+p+'</span><span class="ptag-uk">'+cur.puk[i]+'</span>';
+    }).join('');
+    document.getElementById('m-phrases-uk-wrap').innerHTML = '';
+  } else {
+    ph.innerHTML = cur.pde.map(function(p){ return '<span class="ptag">'+p+'</span>'; }).join('');
+    var uid = 'puk-'+cur.id;
+    document.getElementById('m-phrases-uk-wrap').innerHTML =
+      '<button class="trbtn" style="margin-bottom:8px" onclick="var e=document.getElementById(''+uid+'');var s=e.style.display==='none';e.style.display=s?'flex':'none';this.textContent=s?'🙈 Ausblenden':'🇺🇦 Phrasen übersetzen'">🇺🇦 Phrasen übersetzen</button>'+
+      '<div id="'+uid+'" class="phrases" style="display:none">'+cur.puk.map(function(p){ return '<span class="ptag-uk">'+p+'</span>'; }).join('')+'</div>';
+  }
+  document.getElementById('m-pre').style.display = 'block';
+  document.getElementById('m-chat-area').style.display = 'none';
+  document.getElementById('m-fb').style.display = 'none';
+  show('s-mission');
+}
+
+function startSparring() {
+  document.getElementById('m-pre').style.display = 'none';
+  document.getElementById('m-chat-area').style.display = 'flex';
+  document.getElementById('chatmsgs').innerHTML = '';
+  addMsg('sys','Los geht's! Schreibe auf Deutsch – Fehler sind OK! 💪
+Починаємо – помилки нормальні!');
+  agentOpen();
+}
+
+function addMsg(role, text) {
+  var area = document.getElementById('chatmsgs');
+  var d = document.createElement('div');
+  d.className = 'msg '+role;
+  var lbl = role==='ai'?'KI-Partner': role==='user'?'Du / Ти':'';
+  d.innerHTML = (lbl?'<div class="msglbl">'+lbl+'</div>':'')+'<div class="bubble">'+text.replace(/
+/g,'<br>')+'</div>';
+  area.appendChild(d);
+  area.scrollTop = area.scrollHeight;
+}
+
+function showTyping() {
+  var area=document.getElementById('chatmsgs');
+  var d=document.createElement('div'); d.id='typ'; d.className='msg ai';
+  d.innerHTML='<div class="bubble"><div class="typing"><span></span><span></span><span></span></div></div>';
+  area.appendChild(d); area.scrollTop=area.scrollHeight;
+}
+function hideTyping() { var e=document.getElementById('typ'); if(e) e.remove(); }
+
+function agentOpen() {
+  showTyping();
+  callClaude([{role:'user',content:'[START]'}],
+    cur.sys+'
+
+Starte mit einer kurzen, freundlichen Begrüßung (1-2 Sätze).',
+    function(r){ hideTyping(); if(r){hist.push({role:'assistant',content:r}); addMsg('ai',r);} });
+}
+
+function checkRisk(t) {
+  t = t.toLowerCase();
+  var c=['nicht mehr leben','mir etwas antun','ich will sterben','хочу померти','більше не жити'];
+  var s=['allein','niemanden','halte das nicht aus','zu viel','самотній','нікого','не витримую'];
+  for(var i=0;i<c.length;i++){ if(t.indexOf(c[i])!==-1) return 'crisis'; }
+  var sc=0; for(var j=0;j<s.length;j++){ if(t.indexOf(s[j])!==-1) sc++; }
+  return sc>=2?'support':sc===1?'warn':'ok';
+}
+
+function sendMsg() {
+  var inp=document.getElementById('txtin'), text=inp.value.trim();
+  if(!text||!cur) return;
+  inp.value='';
+  document.getElementById('btn-send').disabled=true;
+  var risk=checkRisk(text);
+  if(risk==='crisis'){ show('s-crisis'); document.getElementById('btn-send').disabled=false; return; }
+  if(risk==='support'){ show('s-support'); document.getElementById('btn-send').disabled=false; return; }
+  if(risk==='warn'){
+    var wb=document.getElementById('warnbar');
+    wb.style.display='block';
+    wb.textContent='Wenn es dir schwer fällt – du kannst jederzeit Pause machen. / Якщо тобі важко – можеш зробити паузу.';
+    setTimeout(function(){ wb.style.display='none'; },6000);
+  }
+  addMsg('user',text); hist.push({role:'user',content:text}); round++;
+  showTyping();
+  callClaude(hist, cur.sys, function(r){
+    hideTyping();
+    if(r){ hist.push({role:'assistant',content:r}); addMsg('ai',r); }
+    document.getElementById('btn-send').disabled=false;
+    if(round>=4) setTimeout(showFeedback,1400);
+  });
+}
+
+function showFeedback() {
+  document.getElementById('m-chat-area').style.display='none';
+  document.getElementById('m-fb').style.display='block';
+  document.getElementById('fbcontent').innerHTML='<div class="loading"><div class="spinner"></div><p style="color:var(--text2);font-size:14px">Feedback wird erstellt…</p></div>';
+  var d=hist.map(function(m){ return (m.role==='user'?'Schüler':'Lehrer')+': '+m.content; }).join('
+');
+  var p='Analysiere diesen Deutschlern-Dialog. Motivierendes Feedback auf Deutsch.
+Dialog:
+'+d+'
+NUR JSON (keine Backticks):
+{"positiv":"…","tipp":"…","mut":"…","xp":'+cur.xp+'}';
+  callClaude([{role:'user',content:p}],'Du bist freundlicher Deutschlehrer. Antworte IMMER nur mit validem JSON.',
+    function(raw){
+      var fb={positiv:'Gut versucht!',tipp:'Übe weiter.',mut:'Du schaffst das!',xp:cur.xp};
+      try{ fb=JSON.parse((raw||'').replace(/```json|```/g,'').trim()); }catch(e){}
+      var xpE=parseInt(fb.xp)||cur.xp;
+      xp+=xpE; done++;
+      if(earned.indexOf(cur.id)===-1) earned.push(cur.id);
+      checkLevel(); checkAwards();
+      document.getElementById('fbcontent').innerHTML=
+        '<div class="fbcard"><h3>✨ Feedback</h3>'+
+        '<div class="fbrow"><div class="fbico">✅</div><div class="fbtxt">'+fb.positiv+'</div></div>'+
+        '<div class="fbrow"><div class="fbico">💡</div><div class="fbtxt">'+fb.tipp+'</div></div>'+
+        '<div class="fbrow"><div class="fbico">💪</div><div class="fbtxt">'+fb.mut+'</div></div>'+
+        '</div><div class="xpwon"><div class="xn">+'+xpE+'</div><div class="xl">XP verdient 🎉</div></div>';
+    });
+}
+
+function checkLevel(){ if(xp>=lvl*150){ lvl++; toast('Level '+lvl+' erreicht! ⭐'); } }
+function checkAwards(){
+  if(done>=1&&earned.indexOf('f')===-1){ earned.push('f'); toast('Award: Erster Dialog 👋'); }
+  if(done>=3&&earned.indexOf('brave')===-1){ earned.push('brave'); toast('Award: Mut gezeigt 💪'); }
+  if(done>=3&&earned.indexOf('all3')===-1){ earned.push('all3'); toast('Award: Alle 3 Missionen 🏆'); }
+  if(lvl>=2&&earned.indexOf('level2')===-1){ earned.push('level2'); toast('Level 2 Award ⭐'); }
+}
+
+function nextRound(){
+  round=0; hist=[];
+  document.getElementById('m-fb').style.display='none';
+  document.getElementById('m-chat-area').style.display='flex';
+  document.getElementById('chatmsgs').innerHTML='';
+  agentOpen();
+}
+
+// ═══════════════════════════════════════════════
+// VOICE
+// ═══════════════════════════════════════════════
+function renderVoice() {
+  var vml=document.getElementById('vmlist'); vml.innerHTML='';
+  MISSIONS.forEach(function(m){
+    var b=document.createElement('button'); b.className='mcard';
+    b.innerHTML='<div class="mico" style="background:'+m.bg+'">'+m.icon+'</div>'+
+      '<div style="flex:1"><div class="mde">'+m.tde+'</div><div class="muk">'+m.tuk+'</div></div>'+
+      '<div class="mbadge">🎙️</div>';
+    b.addEventListener('click',(function(id){return function(){openVoice(id);};})(m.id));
+    vml.appendChild(b);
+  });
+}
+
+function openVoice(id){
+  voiceCur=null;
+  for(var i=0;i<MISSIONS.length;i++){if(MISSIONS[i].id===id){voiceCur=MISSIONS[i];break;}}
+  if(!voiceCur) return;
+  document.getElementById('vm-tde').textContent=voiceCur.tde;
+  document.getElementById('vm-tuk').textContent=voiceCur.tuk;
+  document.getElementById('vm-sde').textContent=voiceCur.sde;
+  bilingualWrap('vm-suk-wrap', voiceCur.suk, '');
+  var isHttps = location.protocol==='https:' || location.hostname==='localhost';
+  var hasSR = 'webkitSpeechRecognition' in window || 'SpeechRecognition' in window;
+  document.getElementById('vm-httpsinfo').style.display = (!isHttps||!hasSR) ? 'block' : 'none';
+  document.getElementById('vm-pre').style.display='block';
+  document.getElementById('vm-active').style.display='none';
+  show('s-vmission');
+}
+
+function startVoice(){
+  var isHttps=location.protocol==='https:'||location.hostname==='localhost';
+  var hasSR='webkitSpeechRecognition' in window||'SpeechRecognition' in window;
+  if(!isHttps||!hasSR){ document.getElementById('vm-httpsinfo').style.display='block'; return; }
+  document.getElementById('vm-pre').style.display='none';
+  document.getElementById('vm-active').style.display='flex';
+  document.getElementById('vm-stde').textContent='Drücke das Mikrofon und sprich';
+  document.getElementById('vm-stuk').textContent='Натисни мікрофон і говори';
+  vmHist=[];
+  callClaude([{role:'user',content:'[START]'}],
+    voiceCur.sys+'
+
+Starte mit kurzer freundlicher Begrüßung (1-2 Sätze).',
+    function(r){ if(r){ vmHist.push({role:'assistant',content:r}); document.getElementById('vm-aitxt').textContent=r; speak(r); } });
+}
+
+function startRec(){
+  var SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  rec=new SR(); rec.lang='de-DE'; rec.continuous=false; rec.interimResults=true;
+  var fin='';
+  rec.onresult=function(e){
+    var tmp='';
+    for(var i=e.resultIndex;i<e.results.length;i++){
+      if(e.results[i].isFinal) fin+=e.results[i][0].transcript;
+      else tmp+=e.results[i][0].transcript;
+    }
+    document.getElementById('vm-trans').textContent=fin||tmp||'…';
+  };
+  rec.onend=function(){
+    if(fin.trim()){
+      document.getElementById('vm-stde').textContent='Verarbeite…';
+      var rk=checkRisk(fin);
+      if(rk==='crisis'){show('s-crisis');return;}
+      if(rk==='support'){show('s-support');return;}
+      vmHist.push({role:'user',content:fin});
+      callClaude(vmHist,voiceCur.sys,function(r){
+        if(r){ vmHist.push({role:'assistant',content:r}); document.getElementById('vm-aitxt').textContent=r; speak(r); }
+        document.getElementById('vm-stde').textContent='Drücke das Mikrofon – deine Antwort';
+        document.getElementById('vm-stuk').textContent='Натисни мікрофон – твоя відповідь';
+        document.getElementById('vm-trans').textContent='';
+      });
+    } else {
+      document.getElementById('vm-stde').textContent='Nichts gehört – nochmal versuchen';
+    }
+  };
+  rec.onerror=function(e){ document.getElementById('vm-stde').textContent='Fehler: '+e.error; };
+  fin='';
+  rec.start();
+  document.getElementById('vm-stde').textContent='Höre zu… sprich jetzt!';
+  document.getElementById('vm-stuk').textContent='Слухаю… говори зараз!';
+  document.getElementById('vm-trans').textContent='';
+}
+
+function speak(t){
+  if(!window.speechSynthesis) return;
+  window.speechSynthesis.cancel();
+  var u=new SpeechSynthesisUtterance(t); u.lang='de-DE'; u.rate=0.9;
+  window.speechSynthesis.speak(u);
+}
+
+// ═══════════════════════════════════════════════
+// PODCAST
+// ═══════════════════════════════════════════════
+function renderPod(){
+  var pl=document.getElementById('podlist'); pl.innerHTML='';
+  PODCASTS.forEach(function(p){
+    var d=document.createElement('div'); d.className='pccard'+(p.av?'':' locked');
+    var player=p.av?'<div style="background:var(--bg4);border-radius:var(--r2);padding:14px"><p style="font-size:13px;font-weight:600;color:var(--accent);margin-bottom:6px">🎧 Podcast 1 – '+p.dur+'</p><audio controls style="width:100%;height:40px" src="podcast1.mp3"></audio><p style="font-size:11px;color:var(--text3);margin-top:6px">Audio-Datei muss als podcast1.mp3 im gleichen Ordner liegen</p></div>':'';
+    var badge=p.av?'<span class="pcbadge av">▶ Verfügbar</span>':'<span class="pcbadge soon">🔒 Bald verfügbar</span>';
+    d.innerHTML='<div class="pchdr"><div class="pcnum'+(p.av?' av':'')+'">'+p.n+'</div><div><div class="pcde">'+p.tde+'</div><div class="pcuk">'+p.tuk+'</div></div></div>'+badge+player;
+    pl.appendChild(d);
+  });
+}
+
+// ═══════════════════════════════════════════════
+// INFO BOXES
+// ═══════════════════════════════════════════════
+function renderInfo(){
+  var il=document.getElementById('infolist'); il.innerHTML='';
+  var lv=profile.level||'A1';
+  INFOS.forEach(function(box,idx){
+    var eid='ei'+idx, cid='ec'+idx;
+    var hukHtml = lv==='A1'
+      ? '<div class="infohuk">'+box.huk+'</div>'
+      : '<button class="trbtn" style="margin:3px 0 6px" onclick="var e=this.nextSibling;var s=e.style.display==='none';e.style.display=s?'block':'none';this.textContent=s?'🙈 Ausblenden':'🇺🇦 Übersetzen'">🇺🇦 Übersetzen</button><div class="infohuk" style="display:none">'+box.huk+'</div>';
+    var tukHtml = lv==='A1' ? '<div class="infotuk">'+box.tuk+'</div>' : '';
+    var card=document.createElement('div'); card.className='infocard';
+    card.innerHTML=
+      '<button class="infohdr" id="ih'+idx+'">'+
+        '<div class="infoico">'+box.ico+'</div>'+
+        '<div class="infobody">'+
+          '<div class="infohde">'+box.hde+'</div>'+hukHtml+
+          '<div class="infotde">'+box.tde+'</div>'+tukHtml+
+        '</div>'+
+        '<div class="infochev" id="'+cid+'">▾</div>'+
+      '</button>'+
+      '<div class="infoexp" id="'+eid+'">'+
+        '<div class="expde">'+box.fde+'</div>'+
+        '<div class="expuk">'+box.fuk+'</div>'+
+      '</div>';
+    il.appendChild(card);
+    document.getElementById('ih'+idx).addEventListener('click',function(){
+      var exp=document.getElementById(eid), chev=document.getElementById(cid);
+      var open=exp.classList.contains('open');
+      exp.classList.toggle('open',!open);
+      chev.textContent=open?'▾':'▴';
+    });
+  });
+}
+
+// ═══════════════════════════════════════════════
+// PROGRESS
+// ═══════════════════════════════════════════════
+function renderProg(){
+  document.getElementById('lv-num').textContent=lvl;
+  document.getElementById('lv-xp').textContent=xp+' XP gesamt · загалом';
+  document.getElementById('xpfill2').style.width=Math.min(100,xp/(lvl*150)*100)+'%';
+  document.getElementById('awgrid').innerHTML=AWARDS.map(function(a){
+    var got=earned.indexOf(a.sl)!==-1;
+    return '<div class="aw '+(got?'got':'no')+'"><div class="awico">'+a.ico+'</div><div class="awde">'+a.de+'</div><div class="awuk">'+a.uk+'</div></div>';
+  }).join('');
+  document.getElementById('statgrid').innerHTML=[
+    {l:'Missionen',v:done},{l:'XP',v:xp},{l:'Streak',v:streak},{l:'Awards',v:earned.length}
+  ].map(function(s){
+    return '<div style="background:var(--bg3);border:1px solid var(--border);border-radius:var(--r2);padding:12px;text-align:center"><div style="font-size:22px;font-weight:700;color:var(--accent)">'+s.v+'</div><div style="font-size:10px;color:var(--text3);margin-top:2px">'+s.l+'</div></div>';
+  }).join('');
+}
+
+// ═══════════════════════════════════════════════
+// CLAUDE API
+// ═══════════════════════════════════════════════
+function callClaude(msgs, sys, cb){
+  fetch('https://api.anthropic.com/v1/messages',{
+    method:'POST', headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,system:sys,messages:msgs})
+  })
+  .then(function(r){return r.json();})
+  .then(function(d){cb(d.content&&d.content[0]?d.content[0].text:null);})
+  .catch(function(){cb('Entschuldigung, keine Verbindung. Bitte nochmal versuchen.');});
+}
+
+// ═══════════════════════════════════════════════
+// WIRE UP ALL BUTTONS
+// ═══════════════════════════════════════════════
+document.getElementById('btn-start').addEventListener('click',function(){
+  obStep=0; obSels={}; show('s-ob'); renderOb();
+});
+document.getElementById('btn-ob-next').addEventListener('click', obNext);
+
+document.getElementById('btn-br-chat').addEventListener('click',  function(){ show('s-chat'); });
+document.getElementById('btn-br-voice').addEventListener('click', function(){ show('s-voice'); });
+document.getElementById('btn-br-pod').addEventListener('click',   function(){ show('s-pod'); });
+document.getElementById('btn-br-info').addEventListener('click',  function(){ show('s-info'); });
+
+document.getElementById('btn-chat-back').addEventListener('click', function(){ show('s-branches'); });
+document.getElementById('btn-m-back').addEventListener('click',    function(){ show('s-chat'); });
+document.getElementById('btn-m-start').addEventListener('click',   startSparring);
+document.getElementById('btn-send').addEventListener('click',      sendMsg);
+document.getElementById('txtin').addEventListener('keydown', function(e){
+  if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMsg();}
+});
+document.getElementById('btn-nextround').addEventListener('click', nextRound);
+document.getElementById('btn-fb-back').addEventListener('click',   function(){ show('s-chat'); });
+
+document.getElementById('btn-voice-back').addEventListener('click', function(){ show('s-branches'); });
+document.getElementById('btn-vm-back').addEventListener('click',    function(){
+  if(rec) rec.abort();
+  if(window.speechSynthesis) window.speechSynthesis.cancel();
+  show('s-voice');
+});
+document.getElementById('btn-vm-start').addEventListener('click',  startVoice);
+document.getElementById('btn-vm-mic').addEventListener('click',    function(){
+  if(rec) rec.abort();
+  startRec();
+});
+document.getElementById('btn-vm-end').addEventListener('click',    function(){
+  if(rec) rec.abort();
+  if(window.speechSynthesis) window.speechSynthesis.cancel();
+  vmHist=[]; show('s-voice');
+});
+
+document.getElementById('btn-pod-back').addEventListener('click',  function(){ show('s-branches'); });
+document.getElementById('btn-info-back').addEventListener('click', function(){ show('s-branches'); });
+
+document.getElementById('pnav-home').addEventListener('click',  function(){ show('s-branches'); });
+document.getElementById('pnav-help').addEventListener('click',  function(){ show('s-help'); });
+document.getElementById('hnav-home').addEventListener('click',  function(){ show('s-branches'); });
+document.getElementById('hnav-prog').addEventListener('click',  function(){ show('s-prog'); });
+document.getElementById('btn-help-crisis').addEventListener('click', function(){ show('s-crisis'); });
+
+document.getElementById('btn-sup-back').addEventListener('click',    function(){ show('s-branches'); });
+document.getElementById('btn-sup-mission').addEventListener('click', function(){ show('s-chat'); });
+document.getElementById('btn-sup-help').addEventListener('click',    function(){ show('s-help'); });
+document.getElementById('btn-sup-pause').addEventListener('click',   function(){ show('s-branches'); });
+document.getElementById('btn-sup-crisis').addEventListener('click',  function(){ show('s-crisis'); });
+document.getElementById('btn-safe').addEventListener('click',        function(){ show('s-branches'); toast('Schön dass du in Sicherheit bist 💙'); });
+
+document.getElementById('mood-good').addEventListener('click', function(){ document.getElementById('mood-bar').style.display='none'; toast('Super! Los geht's 😊'); });
+document.getElementById('mood-ok').addEventListener('click',   function(){ document.getElementById('mood-bar').style.display='none'; toast('Alles gut 💙'); });
+document.getElementById('mood-hard').addEventListener('click', function(){ document.getElementById('mood-bar').style.display='none'; show('s-support'); });
+document.getElementById('mood-bad').addEventListener('click',  function(){ document.getElementById('mood-bar').style.display='none'; show('s-crisis'); });
+</script>
+</body>
+</html>
